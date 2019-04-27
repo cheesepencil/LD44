@@ -5,7 +5,8 @@ module.exports = {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
-    overlay: true
+    overlay: true,
+    open: true
   },
   entry: './src/index.ts',
   devtool: 'inline-source-map',
@@ -22,7 +23,20 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              outputPath: 'images'
+              outputPath: 'images',
+              name: '[name].[ext]'
+            }
+          },
+        ],
+      },
+      {
+        test: /\.(css)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'styles',
+              name: '[name].[ext]'
             }
           },
         ],

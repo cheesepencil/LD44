@@ -1,4 +1,8 @@
 require('./index.html');
-import * as Phaser from 'phaser';
+require('./styles/master.css');
+import { LDGame } from './game';
+import { gameConfig } from './gameConfig';
 
-console.log(`Phaser v${Phaser.VERSION}`);
+window.onload = () => {
+    let game = new LDGame(gameConfig);
+};
