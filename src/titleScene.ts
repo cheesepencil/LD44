@@ -1,5 +1,4 @@
 import 'phaser';
-import { Loader } from 'phaser';
 const cat: string = require('./images/cat.png');
 const title_01: string = require('./images/title-01.png');
 const title_02: string = require('./images/title-02.png');
@@ -11,7 +10,7 @@ export class TitleScene extends Phaser.Scene {
     private ready: boolean = false;
 
     constructor() {
-        super({ key: 'GameScene' })
+        super({ key: 'TitleScene' })
     }
 
     init(params: any): void {
@@ -40,11 +39,11 @@ export class TitleScene extends Phaser.Scene {
         this.input.keyboard.on('keydown_SPACE', () => {
             if (this.ready) {
                 this.ready = false;
-                this.cameras.main.fadeOut(1500);
+                this.cameras.main.fadeOut(500);
             }
         });
         this.cameras.main.once('camerafadeoutcomplete', () => {
-            console.log('next scene plx!');
+            this.scene.start('LDGameScene');
         });
     }
 

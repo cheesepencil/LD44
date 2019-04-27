@@ -1,4 +1,5 @@
 import { TitleScene } from './titleScene';
+import { LDGameScene } from './ldGameScene';
 
 export const gameConfig: GameConfig = {
     type: Phaser.AUTO,
@@ -17,5 +18,5 @@ export const gameConfig: GameConfig = {
     },
     width: 240,
     height: 160,
-    scene: [TitleScene]
+    scene: [TitleScene, LDGameScene]
 };
