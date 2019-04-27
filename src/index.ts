@@ -1,3 +1,4 @@
 require('./index.html');
+import * as Phaser from 'phaser';
 
-console.log("Teating 1, 2, 3");
+console.log(`Phaser v${Phaser.VERSION}`);
