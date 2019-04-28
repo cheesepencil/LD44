@@ -1,5 +1,6 @@
 import 'phaser';
 const cat: string = require('./images/cat.png');
+const youdidit: string = require('./audio/youdidit.wav');
 
 export class WinScene extends Phaser.Scene {
     private ready: boolean = false;
@@ -13,10 +14,11 @@ export class WinScene extends Phaser.Scene {
     }
 
     preload(): void {
-
+        this.load.audio('youdidit', youdidit);
     }
 
     create(): void {
+        this.sound.play('youdidit');
         this.cameras.main.fadeIn(500, 255, 255, 255);
         let winText = this.add.text(16, 16, 'You win!!!');
         let winText2 = this.add.text(16, 32, 'Press space...');

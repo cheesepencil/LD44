@@ -6,6 +6,21 @@ const background: string = require('./images/background.png');
 const trailerFront: string = require('./images/trailerfront.png');
 const trailerBack: string = require('./images/trailerback.png');
 const badguy: string = require('./images/badguy.png');
+const ack01: string = require('./audio/ack01.wav');
+const ack02: string = require('./audio/ack02.wav');
+const ack03: string = require('./audio/ack03.wav');
+const jump01: string = require('./audio/jump01.wav');
+const jump02: string = require('./audio/jump02.wav');
+const jump03: string = require('./audio/jump03.wav');
+const jump04: string = require('./audio/jump04.wav');
+const meow01: string = require('./audio/meow01.wav');
+const meow02: string = require('./audio/meow02.wav');
+const meow03: string = require('./audio/meow03.wav');
+const meow04: string = require('./audio/meow04.wav');
+const meow05: string = require('./audio/meow05.wav');
+const meowhurl01: string = require('./audio/meowhurl01.wav');
+const meowhurl02: string = require('./audio/meowhurl02.wav');
+const meowhurl03: string = require('./audio/meowhurl03.wav');
 
 export class LDGameScene extends Phaser.Scene {
     private cursors: Phaser.Input.Keyboard.CursorKeys;
@@ -41,9 +56,29 @@ export class LDGameScene extends Phaser.Scene {
         this.load.image('trailerfront', trailerFront);
         this.load.image('trailerback', trailerBack);
         this.load.image('badguy', badguy);
+        this.load.audio('ack01', ack01);
+        this.load.audio('ack02', ack02);
+        this.load.audio('ack03', ack03);
+        this.load.audio('jump01', jump01);
+        this.load.audio('jump02', jump02);
+        this.load.audio('jump03', jump03);
+        this.load.audio('jump04', jump04);
+        this.load.audio('meow01', meow01);
+        this.load.audio('meow02', meow02);
+        this.load.audio('meow03', meow03);
+        this.load.audio('meow04', meow04);
+        this.load.audio('meow05', meow05);
+        this.load.audio('meowhurl01', meowhurl01);
+        this.load.audio('meowhurl02', meowhurl02);
+        this.load.audio('meowhurl03', meowhurl03);
     }
 
     create(): void {
+        this.winner = false;
+        this.ouchie = false;
+        this.kittyCount = 0;
+        this.pickedUpKitty = undefined;
+        this.pickUppableKitty = undefined;
         this.scene.launch('UIScene');
         this.cursors = this.input.keyboard.createCursorKeys();
         this.add.image(0, 160 - 20, 'trailerback').setOrigin(0, 1);
@@ -135,6 +170,8 @@ export class LDGameScene extends Phaser.Scene {
 
             // jump logic
             if (this.cursors.space.isDown && isTouchingDown && !this.spaceWasDown) {
+                let j = Phaser.Math.RND.integerInRange(1, 4);
+                this.sound.play(`jump0${j}`);
                 this.playerSprite.setVelocityY(-96);
                 this.spaceWasDown = true;
             }
@@ -146,10 +183,14 @@ export class LDGameScene extends Phaser.Scene {
             if (this.cursors.shift.isDown && this.shiftWasDown === false) {
                 this.shiftWasDown = true;
                 if (this.pickedUpKitty === undefined && this.pickUppableKitty !== undefined) {
+                    let j = Phaser.Math.RND.integerInRange(1, 5);
+                    this.sound.play(`meow0${j}`);
                     this.pickedUpKitty = this.pickUppableKitty;
                     this.pickedUpKitty.setFlipY(true);
                 }
                 else if (this.pickedUpKitty !== undefined) {
+                    let j = Phaser.Math.RND.integerInRange(1, 3);
+                    this.sound.play(`meowhurl0${j}`);
                     this.pickedUpKitty.setVelocityY(-128);
                     this.pickedUpKitty.setVelocityX(this.playerFacingRight ?
                         96 :
@@ -190,8 +231,9 @@ export class LDGameScene extends Phaser.Scene {
         }
 
         if (this.lastKittyCount === this.kittyCount) {
+            console.log(this.kittyCount);
             (this.scene.get('UIScene') as UIScene).updateKittyCount(this.kittyCount);
-            if (this.kittyCount === 20 && this.winner === false) {
+            if (this.kittyCount >= 20 && this.winner === false) {
                 this.winner = true;
                 this.timer.remove();
                 (this.scene.get('UIScene') as UIScene).scene.stop();
@@ -216,6 +258,8 @@ export class LDGameScene extends Phaser.Scene {
 
     private dangit() {
         if (this.ouchie === false) {
+            let i = Phaser.Math.RND.integerInRange(1, 3);
+            this.sound.play(`ack0${i}`);
             this.ouchie = true;
             this.playerSprite.setVelocityX(0);
             this.playerSprite.setVelocityY(-64);
@@ -226,6 +270,8 @@ export class LDGameScene extends Phaser.Scene {
                 onComplete: () => this.ouchie = false
             })
             if (this.pickedUpKitty !== undefined) {
+                let j = Phaser.Math.RND.integerInRange(1, 3);
+                this.sound.play(`meowhurl0${j}`);
                 this.pickedUpKitty.setVelocityY(-160);
                 this.pickedUpKitty.setVelocityX(this.playerFacingRight ?
                     -200 :

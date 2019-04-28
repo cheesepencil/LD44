@@ -28,7 +28,12 @@ export class UIScene extends Phaser.Scene {
     }
 
     public updateKittyCount(count: number): void {
-        this.kittyText.setText(`Cats collected: ${count}/20`);
+        try {
+            this.kittyText.setText(`Cats collected: ${count}/20`);
+        }
+        catch(x){
+            console.log('fucked up somewhere...');
+        }
     }
 
     public updateTimer(sec: number): void {

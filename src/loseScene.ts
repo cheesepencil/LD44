@@ -1,4 +1,5 @@
 export class LoseScene extends Phaser.Scene {
+    private betterlucknexttime: string = require('./audio/betterlucknexttime.wav');
     private ready: boolean = false;
 
     constructor() {
@@ -10,7 +11,7 @@ export class LoseScene extends Phaser.Scene {
     }
 
     preload(): void {
-
+        this.load.audio('betterlucknexttime', this.betterlucknexttime);
     }
 
     create(): void {
@@ -25,6 +26,7 @@ export class LoseScene extends Phaser.Scene {
             }
         });
         this.cameras.main.once('camerafadeincomplete', () => {
+            this.sound.play('betterlucknexttime');
             this.ready = true;
         });
     }
