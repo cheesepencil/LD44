@@ -5,6 +5,11 @@ const title_02: string = require('./images/title-02.png');
 const title_03: string = require('./images/title-03.png');
 const title_04: string = require('./images/title-04.png');
 const pressspace: string = require('./images/pressspace.png');
+const tadaa: string = require('./audio/tadaa.wav');
+const titlemew: string = require('./audio/titlemew.wav');
+const whiplash01: string = require('./audio/whiplash01.wav');
+const whiplash02: string = require('./audio/whiplash02.wav');
+const whiplash03: string = require('./audio/whiplash03.wav');
 
 export class TitleScene extends Phaser.Scene {
     private ready: boolean = false;
@@ -24,6 +29,11 @@ export class TitleScene extends Phaser.Scene {
         this.load.image('title_03', title_03);
         this.load.image('title_04', title_04);
         this.load.image('pressspace', pressspace);
+        this.load.audio('tadaa', tadaa);
+        this.load.audio('titlemew', titlemew);
+        this.load.audio('whiplash01', whiplash01);
+        this.load.audio('whiplash02', whiplash02);
+        this.load.audio('whiplash03', whiplash03);
     }
 
     create(): void {
@@ -45,6 +55,7 @@ export class TitleScene extends Phaser.Scene {
         this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.start('LDGameScene');
         });
+        this.sound.play('tadaa');
     }
 
     private titleTweenComplete(image: Phaser.GameObjects.Image) {
@@ -52,21 +63,25 @@ export class TitleScene extends Phaser.Scene {
     }
 
     private crossoutTitle(image: Phaser.GameObjects.Image) {
+        this.sound.play('whiplash01');
         image.setTexture('title_02');
         this.time.delayedCall(500, this.nextFrame, [image], this);
     }
 
     private nextFrame(image: Phaser.GameObjects.Image) {
+        this.sound.play('whiplash02');
         image.setTexture('title_03');
         this.time.delayedCall(500, this.lastFrame, [image], this);
     }
 
     private lastFrame(image: Phaser.GameObjects.Image) {
+        this.sound.play('whiplash03');
         image.setTexture('title_04');
         this.time.delayedCall(500, this.spaceReady, [], this);
     }
 
     private spaceReady() {
+        this.sound.play('titlemew');
         const kitty = this.add.image(0, 150, 'cat');
         this.tweens.add({
             targets: [kitty],

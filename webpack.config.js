@@ -26,7 +26,7 @@ module.exports = {
               outputPath: 'images',
               name: '[name].[ext]'
             }
-          },
+          }
         ],
       },
       {
@@ -38,8 +38,20 @@ module.exports = {
               outputPath: 'styles',
               name: '[name].[ext]'
             }
-          },
+          }
         ],
+      },
+      {
+        test: /\.(wav)$/,
+        use:[
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'audio',
+              name: '[name].[ext]'
+            }
+          }
+        ]
       },
       {
         test: /\.(html)$/,
@@ -50,7 +62,7 @@ module.exports = {
               name: '[name].[ext]'
             }
           },
-        ],
+        ]
       }
     ]
   },

@@ -28,7 +28,6 @@ export class UIScene extends Phaser.Scene {
     }
 
     public updateKittyCount(count: number): void {
-        debugger;
         this.kittyText.setText(`Cats collected: ${count}/20`);
     }
 
