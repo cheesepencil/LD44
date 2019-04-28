@@ -231,7 +231,6 @@ export class LDGameScene extends Phaser.Scene {
         }
 
         if (this.lastKittyCount === this.kittyCount) {
-            console.log(this.kittyCount);
             (this.scene.get('UIScene') as UIScene).updateKittyCount(this.kittyCount);
             if (this.kittyCount >= 20 && this.winner === false) {
                 this.winner = true;
