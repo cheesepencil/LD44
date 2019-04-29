@@ -2,10 +2,14 @@ import 'phaser';
 import { UIScene } from './uiScene';
 const cat: string = require('./images/cat.png');
 const player: string = require('./images/player.png');
+const player02: string = require('./images/player02.png');
+const playerholding: string = require('./images/playerholding.png');
+const playerholding02: string = require('./images/playerholding02.png');
 const background: string = require('./images/background.png');
 const trailerFront: string = require('./images/trailerfront.png');
 const trailerBack: string = require('./images/trailerback.png');
 const badguy: string = require('./images/badguy.png');
+const badguy2: string = require('./images/badguy02.png');
 const ack01: string = require('./audio/ack01.wav');
 const ack02: string = require('./audio/ack02.wav');
 const ack03: string = require('./audio/ack03.wav');
@@ -40,6 +44,7 @@ export class LDGameScene extends Phaser.Scene {
     private ouchie: boolean = false;
     private timer: Phaser.Time.TimerEvent;
     private winner: boolean = false;
+    private animatingPlayer = false;
 
     constructor() {
         super({ key: 'LDGameScene' })
@@ -52,10 +57,14 @@ export class LDGameScene extends Phaser.Scene {
     preload(): void {
         this.load.image('cat', cat);
         this.load.image('player', player);
+        this.load.image('player02', player02);
+        this.load.image('playerholding', playerholding);
+        this.load.image('playerholding02', playerholding02);
         this.load.image('background', background);
         this.load.image('trailerfront', trailerFront);
         this.load.image('trailerback', trailerBack);
         this.load.image('badguy', badguy);
+        this.load.image('badguy2', badguy2);
         this.load.audio('ack01', ack01);
         this.load.audio('ack02', ack02);
         this.load.audio('ack03', ack03);
@@ -79,6 +88,35 @@ export class LDGameScene extends Phaser.Scene {
         this.kittyCount = 0;
         this.pickedUpKitty = undefined;
         this.pickUppableKitty = undefined;
+        // anims
+        this.anims.create({
+            key: 'runningnocat',
+            frames: [
+                { frame: 'player', key: 'player' },
+                { frame: 'player02', key: 'player02' }
+            ],
+            frameRate: 8,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'runningwithcat',
+            frames: [
+                { frame: 'playerholding', key: 'playerholding' },
+                { frame: 'playerholding02', key: 'playerholding02' }
+            ],
+            frameRate: 8,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'wahh',
+            frames: [
+                { frame: 1, key: 'badguy' },
+                { frame: 2, key: 'badguy2' }
+            ],
+            frameRate: 4,
+            repeat: -1
+        });
+        // ???
         this.scene.launch('UIScene');
         this.cursors = this.input.keyboard.createCursorKeys();
         this.add.image(0, 160 - 20, 'trailerback').setOrigin(0, 1);
@@ -116,8 +154,9 @@ export class LDGameScene extends Phaser.Scene {
         this.cameras.main.setBounds(-360, -160, 960, 320);
         let platforms = this.physics.add.staticGroup();
         platforms.create(120, 150, 'background');
+        // badguys
         let badGuys = this.add.group();
-        let badguySprite1 = this.physics.add.sprite(160, 20, 'badguy').setOrigin(1, 1);
+        let badguySprite1 = this.physics.add.sprite(160, 20, 'badguy').setOrigin(1, 1).play('wahh');
         this.time.delayedCall(Phaser.Math.RND.integerInRange(1000, 5000), this.badguyJump, [badguySprite1], this);
         badGuys.add(badguySprite1);
         this.tweens.add({
@@ -128,7 +167,7 @@ export class LDGameScene extends Phaser.Scene {
             yoyo: true,
             flipX: true
         });
-        let badguySprite2 = this.physics.add.sprite(-32, 20, 'badguy').setOrigin(1, 1);
+        let badguySprite2 = this.physics.add.sprite(-32, 20, 'badguy').setOrigin(1, 1).play('wahh');
         this.time.delayedCall(Phaser.Math.RND.integerInRange(1000, 5000), this.badguyJump, [badguySprite1], this);
         badGuys.add(badguySprite2);
         this.tweens.add({
@@ -155,16 +194,45 @@ export class LDGameScene extends Phaser.Scene {
         if (this.ouchie === false) {
             // directional movement
             if (this.cursors.left.isDown && isTouchingDown) {
+                if (this.animatingPlayer === false) {
+                    this.animatingPlayer = true;
+                    if (this.pickedUpKitty !== undefined) {
+                        this.playerSprite.play('runningwithcat');
+                    }
+                    else {
+                        this.playerSprite.play('runningnocat');
+                    }
+                }
                 this.playerFacingRight = false;
                 this.playerSprite.setVelocityX(-64);
                 this.playerSprite.setFlipX(true);
             }
             else if (this.cursors.right.isDown && isTouchingDown) {
+                if (this.animatingPlayer === false) {
+                    this.animatingPlayer = true;
+                    if (this.pickedUpKitty !== undefined) {
+                        this.playerSprite.play('runningwithcat');
+                    }
+                    else {
+                        this.playerSprite.play('runningnocat');
+                    }
+                }
                 this.playerFacingRight = true;
                 this.playerSprite.setVelocityX(64);
                 this.playerSprite.setFlipX(false);
             }
             else if (isTouchingDown) {
+                if (this.animatingPlayer) {
+                    this.animatingPlayer = false;
+                    if (this.pickedUpKitty === undefined) {
+                        this.playerSprite.anims.stop();
+                        this.playerSprite.setTexture('player');
+                    }
+                    else {
+                        this.playerSprite.anims.stop();
+                        this.playerSprite.setTexture('playerholding');
+                    }
+                }
                 this.playerSprite.setVelocityX(0);
             }
 
@@ -183,12 +251,18 @@ export class LDGameScene extends Phaser.Scene {
             if (this.cursors.shift.isDown && this.shiftWasDown === false) {
                 this.shiftWasDown = true;
                 if (this.pickedUpKitty === undefined && this.pickUppableKitty !== undefined) {
+                    this.playerSprite.anims.stop()
+                    this.animatingPlayer = false;
+                    this.playerSprite.setTexture('playerholding');
                     let j = Phaser.Math.RND.integerInRange(1, 5);
                     this.sound.play(`meow0${j}`);
                     this.pickedUpKitty = this.pickUppableKitty;
                     this.pickedUpKitty.setFlipY(true);
                 }
                 else if (this.pickedUpKitty !== undefined) {
+                    this.playerSprite.anims.stop();
+                    this.playerSprite.setTexture('player');
+                    this.animatingPlayer = false;
                     let j = Phaser.Math.RND.integerInRange(1, 3);
                     this.sound.play(`meowhurl0${j}`);
                     this.pickedUpKitty.setVelocityY(-128);
@@ -213,7 +287,7 @@ export class LDGameScene extends Phaser.Scene {
 
         if (this.pickedUpKitty !== undefined) {
             this.pickedUpKitty.setX(this.playerSprite.x);
-            this.pickedUpKitty.setY(this.playerSprite.y - 12);
+            this.pickedUpKitty.setY(this.playerSprite.y - 10);
             this.pickedUpKitty.setFlipX(!this.playerFacingRight);
         }
 
@@ -229,7 +303,6 @@ export class LDGameScene extends Phaser.Scene {
                 onComplete: () => { this.trailerFadingIn = false; this.trailerVisible = true; }
             });
         }
-
         if (this.lastKittyCount === this.kittyCount) {
             (this.scene.get('UIScene') as UIScene).updateKittyCount(this.kittyCount);
             if (this.kittyCount >= 20 && this.winner === false) {
@@ -262,11 +335,18 @@ export class LDGameScene extends Phaser.Scene {
             this.ouchie = true;
             this.playerSprite.setVelocityX(0);
             this.playerSprite.setVelocityY(-64);
+            this.playerSprite.play('runningwithcat');
+            this.animatingPlayer = true;
             this.tweens.add({
                 targets: this.playerSprite,
                 angle: 1440,
                 duration: 1000,
-                onComplete: () => this.ouchie = false
+                onComplete: () => {
+                    this.ouchie = false;
+                    this.playerSprite.anims.stop();
+                    this.playerSprite.setTexture('player');
+                    this.animatingPlayer = false;
+                }
             })
             if (this.pickedUpKitty !== undefined) {
                 let j = Phaser.Math.RND.integerInRange(1, 3);
